@@ -7,6 +7,10 @@ const API_SOURCE_1 = "http://localhost:3000/sendcomponent";
 
 const API_SOURCE_2 = "https://www.themealdb.com/api/json/v1/1/random.php";
 
+const API_SOURCE_3 = "https://notion-cs-content.onrender.com/pages";
+
+
+// const theChoices = ["mealDB", "notionCSContent"]
 
 interface MealData {
     idMeal: string; 
@@ -63,26 +67,77 @@ interface MealData {
     dateModified: string 
   }
 
+interface CSReadingData {
+    id: string; 
+    name: string; 
+    tags: Array<string>;     
+}
 function MyComponent() {
   const [data, setData] = useState(null);
   const [myStr, setMyStr] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [meals, setMeals] = useState(Array<MealData>);
+  const [pages, setPages] = useState(Array<CSReadingData>);
 
+
+  const [displayData, setDisplayData] = useState("");
+  const [theChoices, setTheChoices] = useState(["mealDB", "notionCSContent", "localAPIServer"]);
+  const [choiceNum, setChoiceNum] = useState(0);
+//   const [myChoice, setMyChoice] = useState(theChoices[1]);
+
+  const fetchChoice = (myChoice: string) => {
+    switch(myChoice){
+        case theChoices[0]:
+            return API_SOURCE_2;
+        case theChoices[1]:
+            return API_SOURCE_3;
+        default:
+            return API_SOURCE_2;
+    } 
+  }
+  
+  const tryCatchChoice = (myChoice: string, result: any) => {
+    if(myChoice === theChoices[0])
+        {
+            const theString = JSON.stringify(result.meals);
+            setMyStr(theString);
+            setMeals(result.meals);
+            // This sometimes works
+            // setDisplayData(meals[0].strMeal);
+            // This always works
+            // setDisplayData(JSON.stringify(meals[0].strMeal));
+        }
+        else if(myChoice === theChoices[1])
+        {  
+            setPages(result);
+            // This sometimes works
+            // setDisplayData(pages[8].name);
+            // This always works
+            setDisplayData(JSON.stringify(pages[8].name));
+        }
+  }
+
+  const returnChoice = (myChoice: string) =>{
+    switch(myChoice){
+        case theChoices[0]:
+            return meals[0].strMeal;
+        case theChoices[1]:
+            return pages[8].name;
+        default:
+            return "No data to show";
+    } 
+  }
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true); // Set loading to true before fetching
 
       try {
-        const response = await fetch(API_SOURCE_2);
+        const response = await fetch(fetchChoice(theChoices[choiceNum]));
         const result = await response.json();
-
-        const theString = JSON.stringify(result.meals);
-        setMyStr(theString);
-        setMeals(result.meals);
-        // idMeal
-
+ 
+        tryCatchChoice(theChoices[choiceNum], result);
+ 
         setData(result);
         // setData(result[0].strMeal);
       } catch (error) {
@@ -103,7 +158,15 @@ function MyComponent() {
         <div>
           {/* Display the data once it's loaded */}
           {/* {data.strMeal} */}
-          {meals[0].strMeal}
+
+        <p>{ returnChoice(theChoices[choiceNum]) }</p>
+
+          {/* returnChoice */}
+          {/* <p>{ myChoice === theChoices[0]? meals[0].strMeal: pages[8].name }</p> */}
+          {/* <p>{displayData}</p> */}
+          {/* <p>{pages[8].name}</p> */}
+          {/* pages[8].name */}
+          
           {/* {myStr} */}
         </div>
       )}
