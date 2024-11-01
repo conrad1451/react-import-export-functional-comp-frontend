@@ -8,7 +8,7 @@ import AxiosApp from './apiCallTest/AxiosApp.tsx'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     {/* <App /> */}
-    <AxiosApp/>
-    {/* <MyComponent/> */}
+    {/* <AxiosApp/> */}
+    <MyComponent/>
   </StrictMode>,
 )

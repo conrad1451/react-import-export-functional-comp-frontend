@@ -67,7 +67,6 @@ const AxiosOutput = () => {
   const [meals, setMeals] = useState(Array<MealData>);
   const [isLoading, setIsLoading] = useState(true);
 
-//   MealData
   useEffect(() => {
     setIsLoading(true); // Set loading to true before fetching
 
