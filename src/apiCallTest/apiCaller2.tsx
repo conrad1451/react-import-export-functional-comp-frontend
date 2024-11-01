@@ -65,26 +65,36 @@ const API_SOURCE_1 = "https://www.themealdb.com/api/json/v1/1/random.php";
 const AxiosOutput = () => {
 //   const [meals, setMeals] = useState([]);
   const [meals, setMeals] = useState(Array<MealData>);
+  const [isLoading, setIsLoading] = useState(true);
 
 //   MealData
   useEffect(() => {
+    setIsLoading(true); // Set loading to true before fetching
+
     axios
       .get(API_SOURCE_1)
       .then((res) => {
         setMeals(res.data.meals);
+        setIsLoading(false); // Set loading to false after fetching, regardless of success or failure
       });
   }, []);
 
   return (
     <div>
-      {meals.map((meal) => (
-        <img
-          key={meal.idMeal}
-          src={meal.strMealThumb}
-          alt={meal.strMeal}
-          width={400}
-        />
-      ))}
+        {isLoading ? (
+            <p>Loading...</p> // Display a loading message while data is being fetched
+        ) : (
+            <div>
+                {meals.map((meal) => (
+                    <img
+                    key={meal.idMeal}
+                    src={meal.strMealThumb}
+                    alt={meal.strMeal}
+                    width={400}
+                    />
+                ))}
+            </div>
+            )}
     </div>
   );
 };
