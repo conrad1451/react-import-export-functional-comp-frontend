@@ -7,8 +7,6 @@ const API_SOURCE_1 = "http://localhost:3000/sendcomponent";
 
 const API_SOURCE_2 = "https://www.themealdb.com/api/json/v1/1/random.php";
 
-const API_SOURCE_3 = "https://api.example.com/data";
-
 function MyComponent() {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
