@@ -11,8 +11,13 @@ import './App.css'
 
 import axios from "axios";
 
-const API_SOURCE = "http://localhost:3000/sendcomponent";
-const API_SOURCE_2 = "https://www.themealdb.com/api/json/v1/1/random.php";
+// const API_SOURCE = "http://localhost:3000/sendcomponent";
+const API_SOURCE = "https://www.themealdb.com/api/json/v1/1/random.php";
+
+const API_SOURCE_1 = "https://export-functional-component.onrender.com/sendcomponent";
+const API_SOURCE_2 = "https://export-functional-component.onrender.com/evenArray";
+const API_SOURCE_3 = "https://export-functional-component.onrender.com/squareArray";
+const API_SOURCE_4 = "https://export-functional-component.onrender.com/cubedArray";
 
 // import MyComponent from './MyComponent';
 
@@ -35,11 +40,14 @@ interface CompConfig {
 // 'String' is an unused renaming of 'title'. Did you intend to use it as a type annotation?ts(2842)
 // function MyComponent({title: String, data: Array<Number>}){
 function MyComponent({title, data}){
-  
+
+  const myVar = data as CompConfig;
+  // setDisplayData(JSON.stringify(myVar.props.data));
+
   return(
     <>
-    <p>{title}</p>
-  
+    <p>{title}: {data.join(" | ")}</p>
+    {/* <p>{JSON.stringify(myVar.props.data)}</p> */}
     </>
     )
 }
@@ -75,16 +83,25 @@ function OldApp(){
 
 let myStartData: React.FC<CompConfig>;
 
-let myStartData2: CompConfig;
-
+const myStartData2: CompConfig= {
+  type: "myType",    
+  props: {
+    title: "myTitle",
+    data: [0,0,0]
+  } 
+}
 
 function App() {
   const [count, setCount] = useState(0);
   // const [myData, setMyData] = useState({})
 
-  const [myData, setMyData] = useState(myStartData2);
+  // const [myData, setMyData] = useState(myStartData2);
+
+  const [myConfig, setMyConfig] = useState(myStartData2);
 
   const [myString, setMyString] = useState("");
+
+  const [myArr, setMyArr] = useState(Array<number>());
 
   /**Argument of type 'FC<CompConfig>' is not assignable to parameter of type 'ReactNode | (() => ReactNode)'.
   Type 'FunctionComponent<CompConfig>' is not assignable to type '() => ReactNode'.
@@ -92,38 +109,31 @@ function App() {
   // const [myData, setMyData] = useState(myStartData)
 
 
-  // React.FC<DynamicComponentPropsAlt>[]
   useEffect(() => {
-    // axios.get(databaseId).then((res) => {
+// CHQ: all work: nice
+    // axios.get(API_SOURCE_1).then((res) => {
+
     axios.get(API_SOURCE_2).then((res) => {
+      // axios.get(API_SOURCE_3).then((res) => {
+        // axios.get(API_SOURCE_4).then((res) => {
       // axios.get(API_SOURCE).then((res) => {
       // const theData = res.data;
-      const jsonString = res.data;
+      // const jsonString = res.data;
 
+      const theData = res.data;
+      const myVar = res.data as CompConfig;
+
+      setMyConfig(myVar);
+      setMyArr(myVar.props.data);
+      // setMyArr();
       // const componentConfig = JSON.parse(jsonString);
 
-      const myReadData =JSON.parse(jsonString);
-
-      // [A1]
-      // let myNewVar = CompConfig(10);
-
-      // CHQ: nice it caught that
-      // Conversion of type 'number' to type 'CompConfig' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.ts(2352)
-      // let myNewVar = 10 as CompConfig;
-
-      // const myNewVar = componentConfig as CompConfig;
-      
-      // setMyData(myNewVar);
-
-      // setMyString(componentConfig);
-
-      setMyString(myReadData[0].strMeal);
-
+      // const myReadData =JSON.parse(jsonString); 
+      // setMyString(myReadData[0].strMeal); 
 
       // const ComponentToRender = components[componentConfig.type]; // Lookup component based on type
       // <ComponentToRender {...componentConfig.props} />
-
-
+ 
       // setPages(theData);
       // console.log(pages);
     });
@@ -133,8 +143,12 @@ function App() {
   return(
     <>
     {/* <MyComponent title="One sec" data={[1,2,3]}/> */}
+    <MyComponent title="One sec" data={myArr}/>
+    {/* <MyComponent title="One sec" data={JSON.stringify(myConfig.props.data)}/> */}
+    {/* JSON.stringify(myVar.props.data) */}
     <p>The Text is {myString}</p>
     {/* <MyComponent {...myData.props}/> */}
+        {/* <MyComponent {...myData.props}/> */}
     </>
   )
 }

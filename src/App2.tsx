@@ -3,11 +3,15 @@
 
 import React, { useState, useEffect } from 'react';
 
-const API_SOURCE_1 = "http://localhost:3000/sendcomponent";
+// const API_SOURCE_1 = "http://localhost:3000/sendcomponent";
 
 const API_SOURCE_2 = "https://www.themealdb.com/api/json/v1/1/random.php";
 
 const API_SOURCE_3 = "https://notion-cs-content.onrender.com/pages";
+
+const API_SOURCE_4 = "https://export-functional-component.onrender.com/sendcomponent";
+
+const API_SOURCE_5 = "https://export-functional-component.onrender.com/pages";
 
 
 // const theChoices = ["mealDB", "notionCSContent"]
@@ -67,13 +71,20 @@ interface MealData {
     dateModified: string 
   }
 
+  interface FuncCompPropsObj {
+    type: string;    
+    props: {
+      title: string,
+      data: Array<number>
+    } 
+  }
 interface CSReadingData {
     id: string; 
     name: string; 
     tags: Array<string>;     
 }
-function MyComponent() {
-  const [data, setData] = useState(null);
+function ApiDataDisplayer() {
+  const [data, setData] = useState({});
   const [myStr, setMyStr] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [meals, setMeals] = useState(Array<MealData>);
@@ -81,8 +92,12 @@ function MyComponent() {
 
 
   const [displayData, setDisplayData] = useState("");
-  const [theChoices, setTheChoices] = useState(["mealDB", "notionCSContent", "localAPIServer"]);
-  const [choiceNum, setChoiceNum] = useState(0);
+//   const [theChoices, setTheChoices] = useState(["mealDB", "notionCSContent", "localServerProps", "localServerReg"]);
+//   const [choiceNum, setChoiceNum] = useState(3);
+
+  const theChoices: Array<string> = ["mealDB", "notionCSContent", "localServerProps", "localServerReg"];
+  const choiceNum: number = 2;
+
 //   const [myChoice, setMyChoice] = useState(theChoices[1]);
 
   const fetchChoice = (myChoice: string) => {
@@ -91,6 +106,10 @@ function MyComponent() {
             return API_SOURCE_2;
         case theChoices[1]:
             return API_SOURCE_3;
+        case theChoices[2]:
+            return API_SOURCE_4;
+        case theChoices[3]:
+            return API_SOURCE_5;
         default:
             return API_SOURCE_2;
     } 
@@ -98,23 +117,42 @@ function MyComponent() {
   
   const tryCatchChoice = (myChoice: string, result: any) => {
     if(myChoice === theChoices[0])
-        {
-            const theString = JSON.stringify(result.meals);
-            setMyStr(theString);
-            setMeals(result.meals);
-            // This sometimes works
-            // setDisplayData(meals[0].strMeal);
-            // This always works
-            // setDisplayData(JSON.stringify(meals[0].strMeal));
-        }
-        else if(myChoice === theChoices[1])
-        {  
-            setPages(result);
-            // This sometimes works
-            // setDisplayData(pages[8].name);
-            // This always works
-            setDisplayData(JSON.stringify(pages[8].name));
-        }
+    {
+        const theString = JSON.stringify(result.meals);
+        setMyStr(theString);
+        setMeals(result.meals);
+        // This sometimes works
+        // setDisplayData(meals[0].strMeal);
+        // This always works
+        // setDisplayData(JSON.stringify(meals[0].strMeal));
+    }
+    else if(myChoice === theChoices[1])
+    {  
+        setPages(result);
+        // This sometimes works
+        // setDisplayData(pages[8].name);
+        // This always works
+        setDisplayData(JSON.stringify(pages[8].name));
+    }
+    else if(myChoice === theChoices[2])
+    {   
+      const myVar = result as FuncCompPropsObj;
+
+      // CHQ: all three below work - praise God!
+      // setDisplayData(myVar.type);
+      // setDisplayData(myVar.props.title);
+      setDisplayData(JSON.stringify(myVar.props.data));
+    }
+    else if(myChoice === theChoices[3])
+    {  
+        setPages(result);
+        // This sometimes works
+        // setDisplayData(pages[8].name);
+        // This always works
+        setDisplayData(JSON.stringify(pages[13].name));
+        // but does this?
+          setDisplayData(String(pages[13].name));
+    }
   }
 
   const returnChoice = (myChoice: string) =>{
@@ -123,6 +161,10 @@ function MyComponent() {
             return meals[0].strMeal;
         case theChoices[1]:
             return pages[8].name;
+        case theChoices[2]:
+            return displayData;
+        case theChoices[3]:
+            return pages[13].name;
         default:
             return "No data to show";
     } 
@@ -166,12 +208,14 @@ function MyComponent() {
           {/* <p>{displayData}</p> */}
           {/* <p>{pages[8].name}</p> */}
           {/* pages[8].name */}
-          
-          {/* {myStr} */}
+
+          {/* Following two cause issues with page loading: */}
+          {/* {data} */}
+          {/* {myStr} */} 
         </div>
       )}
     </div>
   );
 }
 
-export default MyComponent;
+export default ApiDataDisplayer;
